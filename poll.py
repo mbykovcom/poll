@@ -3,6 +3,7 @@ from psycopg2 import errors, Error
 
 from data_base import connect_db, add_answer_db, update_answer_db
 
+
 class Poll:
 
     def __init__(self, id_poll=None):
@@ -109,7 +110,7 @@ class Poll:
                     conn.close()
 
     def edit(self, theme=None, answer=None, new_answer=None):
-        conn =connect_db()
+        conn = connect_db()
         if self._id_theme is None:
             self.getId()
         if theme is not None and self._theme != theme:
@@ -131,7 +132,7 @@ class Poll:
             conn.commit()
         conn.close()
         if new_answer is not None:
-            add_answer_db(self._id_theme,new_answer)
+            add_answer_db(self._id_theme, new_answer)
         return True
 
     def delete(self):
@@ -153,9 +154,6 @@ class Poll:
             self.delete()
         else:
             flash('Ошибка! Не хватает информации для операции.\n Укажите объекту id или тему.')
-
-
-
 
     @classmethod
     def getPolls(cls):
@@ -193,27 +191,4 @@ class Poll:
             poll._answers = answer
         conn.close()
         return poll
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

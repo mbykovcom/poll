@@ -10,37 +10,51 @@
 
 <div id="polls" style="width: 60%">
     <ul>
+
         {% for poll in polls.items() %}
-            <li>
+
+            <li id="{{ poll[1][0][0] }}">
                 <h1>Тема: {{ poll[0] }}</h1>
                 <h2>id: {{ poll[1][0][0] }}</h2>
-                <ul>
-{#                <form action="">#}
-{#                    <p><b>Какое у вас состояние разума?</b></p>#}
-{#                    <p><input name="dzen" type="radio" value="nedzen"> Не дзен</p>#}
-{#                    <p><input name="dzen" type="radio" value="dzen"> Дзен</p>#}
-{#                    <p><input name="dzen" type="radio" value="pdzen" checked> Полный дзен</p>#}
-{#                    <p><input type="submit" value="Выбрать"></p>#}
-{#                </form> #}
-                    {% for choice in poll[1] %}
+                 <form action="{{ url_for('vote') }}" method="post">
+                    <ul>
+    {#                <form action="">#}
+    {#                    <p><b>Какое у вас состояние разума?</b></p>#}
+    {#                    <p><input name="dzen" type="radio" value="nedzen"> Не дзен</p>#}
+    {#                    <p><input name="dzen" type="radio" value="dzen"> Дзен</p>#}
+    {#                    <p><input name="dzen" type="radio" value="pdzen" checked> Полный дзен</p>#}
+    {#                    <p><input type="submit" value="Выбрать"></p>#}
+    {#                </form> #}
+                        {% for choice in poll[1] %}
 
-                            <p>
-                                <input type="radio" name="{{ poll[1][0][0] }}"
+                                <p>
+                                    <input type="radio" name="options" value="{{ choice[1] }}"
+                                            {% for answer in answers %}
+                                                {% if  choice[1] == answer[2]%}
+                                                    checked>
+                                                    <a style="background-color: lightgreen"
+                                               {% endif %}
+                                            {% endfor %}
+                                        >{{ choice[2] }}
                                         {% for answer in answers %}
-                                            {% if  choice[1] == answer[2]%}
-                                                checked>
-                                                <a style="background-color: lightgreen"
-                                           {% endif %}
-                                            {% else %}
-                                                ><a
-
-
+                                            {% if  choice[0] == answer[1]%}
+                                                {% set item = count[choice[0]] %}
+                                                | {{ item[choice[1]] }} ({{ (item[choice[1]]/item['sum'])*100 }}%)
+                                            {% endif %}
                                         {% endfor %}
-                                    >{{ choice[2] }}</a></input>
+                                    </a></input>
                                 </p>
-                    {% endfor %}
-                </ul>
-            </li>
+
+                        {% endfor %}
+                    </ul>
+                    {% set sum = count[poll[1][0][0]] %}
+                    Всего проголосовавших: {{ sum['sum'] }}
+                 <input type="submit" value="Голосовать">
+            </form>
+
+                </li>
+
+
         {% endfor %}
     </ul>
 </div>

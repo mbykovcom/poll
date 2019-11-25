@@ -1,6 +1,5 @@
 from flask import flash
-from psycopg2 import errors
-
+import psycopg2
 from data_base import connect_db
 
 
@@ -26,7 +25,7 @@ class Answer:
             try:
                 cursor.execute('SELECT * FROM answer WHERE id_user={0}'.format(self._id_user))
                 answers = cursor.fetchall()
-            except errors as e:
+            except psycopg2.Error as e:
                 flash(e)
                 return False
             finally:
@@ -35,3 +34,61 @@ class Answer:
         for answer in answers:
             ans = [answer[0], answer[1], answer[3]]
             self._answers.append(ans)
+
+    def vote(self, id_choice):
+        print(self._answers)
+        poll = []
+        for ans in self._answers:
+            poll.append(ans[1])
+        conn = connect_db()
+        # SELECT id_poll FROM choice WHERE id={0}.format(id_vote)
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT id_poll FROM choice WHERE id={0}'.format(id_choice))
+                result = cursor.fetchone()
+                id_poll = result[0]
+                if not id_poll in poll:
+                    cursor.execute('INSERT INTO answer (id_poll, id_user, id_choice) '
+                                   'VALUES ({0},{1},{2})'.format(id_poll, self._id_user, id_choice))
+                else:
+                    cursor.execute('UPDATE answer '
+                                   'SET id_choice=\'{0}\''
+                                   'WHERE id_poll={1} and id_user={2}'.format(id_choice, id_poll, self._id_user))
+                conn.commit()
+        except psycopg2.Error as e:
+            conn.rollback()
+            flash(e)
+            return False
+        finally:
+            conn.close()
+        return True
+
+
+    @classmethod
+    def countAnswer(cls, id_theme):
+        conn = connect_db()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT COUNT(id) FROM answer WHERE id_poll={0}'.format(id_theme))
+                count = cursor.fetchone()
+        except psycopg2.Error as e:
+            flash(e)
+            return None
+        finally:
+            conn.close()
+        return count[0]
+
+    @classmethod
+    def countChoice(cls, id_choice):
+        conn = connect_db()
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute('SELECT COUNT(id_user) FROM answer WHERE id_choice={0}'.format(id_choice))
+                count = cursor.fetchone()
+        except psycopg2.Error as e:
+            flash(e)
+            return None
+        finally:
+            conn.close()
+        return count[0]
+

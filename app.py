@@ -45,7 +45,7 @@ def index():
 @app.route('/login')
 @auth.requires_auth
 def login():
-    if request.authorization.username == 'admin':
+    if request.authorization is not None and 'admin' == request.authorization.username:
         return redirect(url_for('admin_panel'))
     else:
         return redirect(url_for('index'))
@@ -64,7 +64,6 @@ def show_registration():
     return render_template('registration.html', data=[])
 
 
-# Повесить валидацию?
 @app.route('/registration', methods=['POST'])
 def registration():
     u = user.User()
@@ -179,14 +178,29 @@ def delete_poll(id_poll):
 def voting_page():
     polls = p.Poll.getPolls()
     u = user.User(request.authorization.username)
-    ans = answer.Answer(u.id_user)
-    poll = polls.items()
-    for pl in poll:
-        for id in pl[1]:
-            for an in ans.answers:
-                print(id[1] == an[2])
-    print(ans.answers)
-    return render_template('voting_page.html', polls=polls, answers=ans.answers)
+    answer_user = answer.Answer(u.id_user)
+    count = {}
+    for pl in polls.items():
+        sum = 0
+        ans = {}
+        for item in pl[1]:
+            c = answer.Answer.countChoice(item[1])
+            sum += c
+            ans[item[1]] = answer.Answer.countChoice(item[1])
+        ans['sum']=sum
+        count[pl[1][0][0]] = ans
+    return render_template('voting_page.html', polls=polls, answers=answer_user.answers, count=count)
+
+
+@app.route('/voting_page', methods=['POST'])
+@auth.requires_auth
+def vote():
+    u = user.User(request.authorization.username)
+    choice = answer.Answer(u.id_user)
+    choice.vote(request.form['options'])
+    print(answer.Answer(u.id_user).answers)
+    return redirect(url_for('voting_page'))
+
 
 
 if __name__ == '__main__':
