@@ -1,16 +1,17 @@
 import psycopg2
 
 config = dict(
-    NAME_DB='poll',
-    USER_DB='poll',
-    PASSWORD_DB='newpass',
-    HOST='localhost')
+    NAME_DB='ddn6hou2602rtf',
+    USER_DB='hfjwzwxsoqhdgk',
+    PASSWORD_DB='a4fa52473856d9a2f4e96358d5ff357571c23c0271b9e068928a685efdebdf7e',
+    HOST='ec2-23-21-70-39.compute-1.amazonaws.com',
+    PORT=5432)
 
 
 def connect_db():
     try:
         conn = psycopg2.connect(host=config['HOST'], dbname=config['NAME_DB'],
-                                user=config['USER_DB'], password=config['PASSWORD_DB'])
+                                user=config['USER_DB'], password=config['PASSWORD_DB'],port=config['PORT'] )
         return conn
     except psycopg2.Error as err:
         print("Connection error: {}".format(err))
