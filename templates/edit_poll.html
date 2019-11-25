@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block head %}
+<title>Редактирование опроса</title>
+{% endblock%}
+
+{% block body %}
+<form id="form" action="{{ url_for('edit_poll', id_poll=poll.id_theme) }}" method=post style="width: 30%">
+    <fieldset>
+        <legend>Редактировать опрос</legend>
+    <p>
+        <label>Тема:</label><br>
+    </p>
+    <p>
+        <input type="text" name="theme" size="50" value="{{ poll.theme }}"/>
+    </p>
+
+    <p>
+        <label>Варианты ответа:</label><br>
+    </p>
+        {% for answer in poll.answers.items() %}
+        <p id="answer_{{ answer[0] }}">
+            <input type="text" name="answer" size="50" value="{{ answer[1]}}"/>
+            <input type="button" name="answer_{{ answer[0] }}" id="delete" onclick="delete_answer(this.name)" value="X"/><br><br>
+        </p>
+        {% endfor %}
+
+    <div id="new_fields">
+    </div>
+    <input type="button" id="add_answer" value="+ вопрос"/>
+    <input type="submit" value="Редактировать опрос"/>
+    </fieldset>
+</form>
+<a href="{{ url_for('index') }}">Назад</a>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="../static/poll.js"></script>
+{% endblock %}

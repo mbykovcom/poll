@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>
+        Страница голосований
+    </title>
+{% endblock%}
+{% block body %}
+
+<a href="{{ url_for('logout') }}">Выход</a>
+
+<div id="polls" style="width: 60%">
+    <ul>
+        {% for poll in polls.items() %}
+            <li>
+                <h1>Тема: {{ poll[0] }}</h1>
+                <h2>id: {{ poll[1][0][0] }}</h2>
+                <ul>
+{#                <form action="">#}
+{#                    <p><b>Какое у вас состояние разума?</b></p>#}
+{#                    <p><input name="dzen" type="radio" value="nedzen"> Не дзен</p>#}
+{#                    <p><input name="dzen" type="radio" value="dzen"> Дзен</p>#}
+{#                    <p><input name="dzen" type="radio" value="pdzen" checked> Полный дзен</p>#}
+{#                    <p><input type="submit" value="Выбрать"></p>#}
+{#                </form> #}
+                    {% for choice in poll[1] %}
+
+                            <p>
+                                <input type="radio" name="{{ poll[1][0][0] }}"
+                                        {% for answer in answers %}
+                                            {% if  choice[1] == answer[2]%}
+                                                checked>
+                                                <a style="background-color: lightgreen"
+                                           {% endif %}
+                                            {% else %}
+                                                ><a
+
+
+                                        {% endfor %}
+                                    >{{ choice[2] }}</a></input>
+                                </p>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+{% endblock %}

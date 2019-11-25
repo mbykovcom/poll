@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>
+        Панель администратора
+    </title>
+{% endblock%}
+{% block body %}
+
+<a href="{{ url_for('show_add_poll') }}">Добавить опрос</a>
+<a href="{{ url_for('logout') }}">Выход</a>
+
+<div id="polls" style="width: 60%">
+    <ul>
+        {% for poll in polls.items() %}
+            <li>
+                <h1>Тема: {{ poll[0] }}</h1>
+                <h2>id: {{ poll[1][0][0] }}</h2>
+                <ul>
+                    {% for answer in poll[1] %}
+                        <li>{{ answer[2] }}</li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('show_edit_poll', id_poll=poll[1][0][0]) }}">Редактировать опрос</a>
+                <a href="{{ url_for('delete_poll', id_poll=poll[1][0][0]) }}">Удалить опрос</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}

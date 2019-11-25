@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>
+        Добавить опрос
+    </title>
+{% endblock%}
+{% block body %}
+
+<form id="form" action="{{ url_for('add_poll') }}" method=post style="width: 30%">
+    <fieldset>
+        <legend>Добавить опрос</legend>
+        <p>
+            <label>Тема:</label><br>
+        </p>
+        <p>
+            <input type="text" name="theme" size="50" value=""/>
+        </p>
+        <p>
+            <label>Варианты ответа:</label><br>
+        </p>
+        <p>
+            <input type="text" name="answer" size="50" value=""/><br>
+        </p>
+        <p>
+            <input type="text" name="answer" size="50" value=""/><br>
+        </p>
+        <p id="new">
+             <input type="text" name="new_answer" size="50" value=""/>
+            <input type="button" name="new" id="delete" onclick="delete_answer(this.name)" value="X"/><br><br>
+        </p>
+    <div id="new_fields">
+    </div>
+    <input type="button" id="add_answer" value="+ вопрос"/>
+    <input type="submit" value="Добавить опрос"/>
+    </fieldset>
+</form>
+<a href="{{ url_for('index') }}">Назад</a>
+
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="../static/poll.js"></script>
+{% endblock %}
