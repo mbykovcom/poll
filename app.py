@@ -48,7 +48,7 @@ def login():
     if request.authorization.username == 'admin':
         return redirect(url_for('admin_panel'))
     else:
-        return redirect(url_for('voting_page'))
+        return redirect(url_for('index'))
 
 
 @app.route('/logout')
