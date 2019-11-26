@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from functools import wraps
 
 from flask import Flask, request, render_template, url_for, redirect, flash
 from werkzeug import exceptions
