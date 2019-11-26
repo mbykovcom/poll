@@ -1,28 +1,22 @@
 #!/usr/bin/python
-from functools import wraps
 
-from flask import Flask, request, render_template, url_for, redirect, flash, jsonify
+from flask import Flask, request, render_template, url_for, redirect, flash
 from werkzeug import exceptions
-import psycopg2
-import data_base, auth
+from auth import *
 import user
 import poll as p
 import answer
-from flask_restful import Api, Resource, reqparse
-import api as api_app
-
+from flask_restful import Api
+import api.api as api_app
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'development key'
 
 conn = data_base.connect_db()
 
-api.add_resource(api_app.Auth, '/api/login')
-
-
-# api.add_resource(TodoSimple, '/api/<string:todo_id>')
-# api.add_resource(TodoSimple, '/api/<string:todo_id>')
-# api.add_resource(TodoSimple, '/api/<string:todo_id>')
+api.add_resource(api_app.Users, '/api/user_add')
+api.add_resource(api_app.Polls, '/api/polls', '/api/poll/', '/api/poll/<int:id>', '/api/poll/<string:theme>',
+                                '/api/add_poll')
 
 
 @app.route('/')
@@ -35,26 +29,12 @@ def index():
     else:
         return render_template('index.html')
 
-#
-# @app.route('/api/login?<login>&<password>', methods=['POST'])
-# def api_index(login, password):
-#     print(login, password)
-#     return jsonify(login, password)
-
 
 @app.route('/login')
-@auth.requires_auth
+@auth.login_required
 def login():
     if request.authorization is not None and 'admin' == request.authorization.username:
         return redirect(url_for('admin_panel'))
-    else:
-        return redirect(url_for('index'))
-
-
-@app.route('/logout')
-def logout():
-    if request.authorization:
-        return auth.authenticate()
     else:
         return redirect(url_for('index'))
 
@@ -79,16 +59,14 @@ def registration():
 
 
 @app.route('/admin')
-@auth.requires_auth
+@auth.login_required
 def admin_panel():
-    if request.authorization.username != 'admin':
-        return redirect(url_for('index'))
     polls = p.Poll.getPolls()
     return render_template('admin_panel.html', polls=polls)
 
 
 @app.route('/add_poll')
-@auth.requires_auth
+@auth.login_required
 def show_add_poll():
     if request.authorization.username == 'admin':
         return render_template('add_poll.html')
@@ -120,7 +98,8 @@ def validation_form(f):
 
 
 @app.route('/add_poll', methods=['POST'])
-@auth.requires_auth
+@auth.login_required
+
 @validation_form
 def add_poll():
     if not request.authorization.username == 'admin':
@@ -137,7 +116,8 @@ def add_poll():
 
 
 @app.route('/edit_poll/<int:id_poll>')
-@auth.requires_auth
+@auth.login_required
+
 def show_edit_poll(id_poll):
     if not request.authorization.username == 'admin':
         return redirect(url_for('index'))
@@ -147,7 +127,8 @@ def show_edit_poll(id_poll):
 
 
 @app.route('/edit_poll/<int:id_poll>', methods=['POST'])
-@auth.requires_auth
+@auth.login_required
+
 @validation_form
 def edit_poll(id_poll):
     poll = p.Poll.getPoll(id_poll)
@@ -162,7 +143,8 @@ def edit_poll(id_poll):
 
 
 @app.route('/delete_poll/<int:id_poll>')
-@auth.requires_auth
+@auth.login_required
+
 def delete_poll(id_poll):
     if not request.authorization.username == 'admin':
         return redirect(url_for('index'))
@@ -174,7 +156,8 @@ def delete_poll(id_poll):
 
 
 @app.route('/voting_page')
-@auth.requires_auth
+@auth.login_required
+
 def voting_page():
     polls = p.Poll.getPolls()
     u = user.User(request.authorization.username)
@@ -193,7 +176,7 @@ def voting_page():
 
 
 @app.route('/voting_page', methods=['POST'])
-@auth.requires_auth
+@auth.login_required
 def vote():
     u = user.User(request.authorization.username)
     choice = answer.Answer(u.id_user)

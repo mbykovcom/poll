@@ -9,9 +9,14 @@ config = dict(
 
 
 def connect_db():
+    """
+    Создает объект подключение к БД Postrges (данные берет из словаря config находится в данном модуле)
+    и возваращет результат psycopg2.connect, если ошибка то False
+    :return: psycopg2.connect
+    """
     try:
         conn = psycopg2.connect(host=config['HOST'], dbname=config['NAME_DB'],
-                                user=config['USER_DB'], password=config['PASSWORD_DB'],port=config['PORT'] )
+                                user=config['USER_DB'], password=config['PASSWORD_DB'])
         return conn
     except psycopg2.Error as err:
         print("Connection error: {}".format(err))
@@ -19,6 +24,12 @@ def connect_db():
 
 
 def add_answer_db(id, answers):
+    """
+    Добавляет варианты ответов в БД к заданной теме
+    :param id: id темы
+    :param answers: list вариантов ответов
+    :return: None
+    """
     conn = connect_db()
     with conn.cursor() as cursor:
         for i in range(0, len(answers)):
@@ -34,6 +45,12 @@ def add_answer_db(id, answers):
 
 
 def update_answer_db(id, answers):
+    """
+    Обновляет варианты ответов в БД
+    :param id: темы
+    :param answers: list вариантов ответов
+    :return: None
+    """
     conn = connect_db()
     with conn.cursor() as cursor:
         for i in range(0, len(answers)):

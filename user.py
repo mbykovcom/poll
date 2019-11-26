@@ -7,7 +7,15 @@ from data_base import connect_db
 
 class User:
 
+    """
+    Класс пользователя
+    """
+
     def __init__(self, login=None):
+        """
+        Создает нового пользователя. Если передан login то берет данного пользователя из БД
+        :param login: Логин существуещего пользователя
+        """
         self._login = login
         if self._login is not None:
             self.getUser()
@@ -17,6 +25,10 @@ class User:
             self.__password = None
 
     def __str__(self):
+        """
+        Получить данные пользователя
+        :return: string
+        """
         return 'Name: {0} | Login: {1} | Password: {2}'.format(self._name, self._login, self.__password)
 
     @property
@@ -24,7 +36,7 @@ class User:
         return self._id_user
 
     @id_user.setter
-    def name(self, id):
+    def id_user(self, id):
         if len(id) > 0:
             self._id_user = id
 
@@ -56,6 +68,10 @@ class User:
             self.__password = password
 
     def create(self):
+        """
+        Добавляет пользователя в БД. Возвращает True - успешно, False - неудачно
+        :return: boll
+        """
         if self._name is not None and self._login is not None and self.__password is not None:
 
             if self.check_login():
@@ -80,6 +96,10 @@ class User:
             return False
 
     def check_login(self):
+        """
+        Проверяет существует ли пользователь с данным логином в БД. Возвращает True - существует, False - не существует
+        :return: boll
+        """
         if self._login is not None:
             conn = connect_db()
             try:
@@ -99,6 +119,10 @@ class User:
             return True
 
     def getUser(self):
+        """
+        Воссоздает пользователя из БД по логину. Возвращает True - успешно, False - неудачно
+        :return:
+        """
         conn = connect_db()
         try:
             with conn.cursor() as cursor:

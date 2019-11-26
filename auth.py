@@ -1,15 +1,11 @@
 import data_base
 from werkzeug.security import check_password_hash
-from flask import Response, request
-from functools import wraps
+from flask_httpauth import HTTPBasicAuth
 
+auth = HTTPBasicAuth()
 
-
-def check_auth(username, password):
-    """This function is called to check if a username /
-    password combination is valid.
-    """
-
+@auth.verify_password
+def verify_password(username, password):
     if len(username) > 0:
         conn = data_base.connect_db()
         with conn.cursor() as cursor:
@@ -21,25 +17,3 @@ def check_auth(username, password):
             if records is not None and username in records[0]:
                 return check_password_hash(records[1], password)
 
-    return False
-
-
-def authenticate():
-    """
-    Response 401
-    """
-
-    return Response(
-        'ERROR 401: Вы должны войти в систему с соответствующими учетными данными', 401,
-        {'WWW-Authenticate': 'Basic realm="Login Required"'})
-
-
-def requires_auth(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.authorization
-        if not auth or not check_auth(auth.username, auth.password):
-            return authenticate()
-        return f(*args, **kwargs)
-
-    return decorated

@@ -4,8 +4,13 @@ from data_base import connect_db
 
 
 class Answer:
+    """Класс ответов"""
 
     def __init__(self, id_user):
+        """
+        Создает объект Answer из БД. Содержит в себе всю информацию об ответах на опросы данного пользователя
+        :param id_user: id пользователя
+        """
         if int(id_user) > 0:
             self._id_user = int(id_user)
             self._answers = []
@@ -20,6 +25,10 @@ class Answer:
         return self._answers
 
     def getAnswers(self):
+        """
+        Метод для получения всех ответов на опросы данного пользователя. Данные записывает в атрибут объекта answers
+        :return: None
+        """
         conn = connect_db()
         with conn.cursor() as cursor:
             try:
@@ -36,6 +45,11 @@ class Answer:
             self._answers.append(ans)
 
     def vote(self, id_choice):
+        """
+        Метод добавления в БД ответа на опрос. Возвращает True - успешно, False - неудачно
+        :param id_choice: id ответа
+        :return: boll
+        """
         print(self._answers)
         poll = []
         for ans in self._answers:
@@ -66,6 +80,11 @@ class Answer:
 
     @classmethod
     def countAnswer(cls, id_theme):
+        """
+        Метод подсчета всех ответов по заданной теме. Возвращает кол-во ответов на опрос
+        :param id_theme: id темы
+        :return: int
+        """
         conn = connect_db()
         try:
             with conn.cursor() as cursor:
@@ -80,6 +99,11 @@ class Answer:
 
     @classmethod
     def countChoice(cls, id_choice):
+        """
+        Метод подсчета всех ответов по заданной теме. Возвращает кол-во ответов на опрос
+        :param id_choice: id ответа
+        :return: int
+        """
         conn = connect_db()
         try:
             with conn.cursor() as cursor:
