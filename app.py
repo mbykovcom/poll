@@ -62,8 +62,11 @@ def registration():
 @app.route('/admin')
 @auth.login_required
 def admin_panel():
-    polls = p.Poll.getPolls()
-    return render_template('admin_panel.html', polls=polls)
+    if request.authorization is not None and 'admin' == request.authorization.username:
+        polls = p.Poll.getPolls()
+        return render_template('admin_panel.html', polls=polls)
+    else:
+        return redirect(url_for('index'))
 
 
 @app.route('/add_poll')

@@ -16,7 +16,8 @@ def connect_db():
     """
     try:
         conn = psycopg2.connect(host=config['HOST'], dbname=config['NAME_DB'],
-                                user=config['USER_DB'], password=config['PASSWORD_DB'])
+                                user=config['USER_DB'], password=config['PASSWORD_DB'],
+                                port=config['PORT'])
         return conn
     except psycopg2.Error as err:
         print("Connection error: {}".format(err))
