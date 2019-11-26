@@ -1,10 +1,10 @@
 import psycopg2
 
 config = dict(
-    NAME_DB='ddn6hou2602rtf',
-    USER_DB='hfjwzwxsoqhdgk',
-    PASSWORD_DB='a4fa52473856d9a2f4e96358d5ff357571c23c0271b9e068928a685efdebdf7e',
-    HOST='ec2-23-21-70-39.compute-1.amazonaws.com',
+    NAME_DB='d53fndllf8en70',
+    USER_DB='udvhxmmpuoiggq',
+    PASSWORD_DB='311a9a9633fab33165ad7d8f405987f86eb3beb0736b1bbf927f326840de170b',
+    HOST='ec2-174-129-255-69.compute-1.amazonaws.com',
     PORT=5432)
 
 
